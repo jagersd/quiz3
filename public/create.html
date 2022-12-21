@@ -1,0 +1,23 @@
+{{template "header"}}
+<h1>Setup a game now! :)</h1>
+
+<form action="/hostquiz" method="POST">
+    <div class="input-container">
+        <label for="host-name">Your name:</label><br>
+        <input type="text" id="host-name" name="playerName"><br>
+
+        <select name="subject-name">
+            <option selected>Select a Quiz Subject</option>
+            {{range .}}
+            <option class="myoption" value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select><br>
+        <label for="question-amount">Amount of questions:</label><br>
+        <input type="number" id="question-amount" name="questionAmount" min="1" max="40" placeholder="20">
+        <br>
+        <input class="mybtn" type="submit" value="Let's go!"><br>
+</form>
+<a href="/" class="mybtn">Go Back</a>
+
+<script src="assets/gamecreator.js"></script>
+{{template "footer"}}

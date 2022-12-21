@@ -1,0 +1,53 @@
+{{template "header"}}
+<div class="container" id="add-question-div">
+    <button class="mybtn" onclick="showAddSubjectForm()">Add new subject</button>
+    <form action="/addsubject" method="POST" id="add-subject-form">
+        <label for="subject-name">Subject Name:</label>
+        <input type="text" id="subject-name" name="subjectName"><br>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <hr>
+    {{.}}
+    <form action="/addquestion" method="POST">
+    <select name="subject-name">
+        <option selected>Select a Quiz Subject</option>
+        {{range .}}
+        <option value="{{.Name}}">{{.Name}}</option>
+        {{end}}
+    </select><br>
+
+    <input type="radio" name="question-type" class="option-input radio" id="multiplechoice" value="1" checked onchange="flipQuestionType()">
+    <label for="multiplechoice">Multiple choice</label><br>
+    <input type="radio" name="question-type" class="option-input radio" id="openquestion" value="2" onchange="flipQuestionType()">
+    <label for="openquestion">Open Question</label><br>
+    <hr>
+    <label for="question-body">Question:</label>
+    <input type="text" id="question-body" name="questionBody"><br>
+    <label for="question-answer">Answer:</label>
+    <input type="text" id="question-answer" name="questionAnswer">
+
+    <div id="options-section">
+    <label for="question-option1">Option:</label>
+    <input type="text" id="question-option1" name="questionOption1"><br>
+    <label for="question-option2">Option:</label>
+    <input type="text" id="question-option2" name="questionOption2"><br>
+    <label for="question-option3">Option:</label>
+    <input type="text" id="question-option3" name="questionOption3"><br>
+    <label for="question-option4">Option:</label>
+    <input type="text" id="question-option4" name="questionOption4"><br>
+    <label for="question-option5">Option:</label>
+    <input type="text" id="question-option5" name="questionOption5"><br>
+    <label for="question-option6">Option:</label>
+    <input type="text" id="question-option6" name="questionOption6"><br>
+    </div>
+
+
+    <input type="submit" value="Submit">
+    </form>
+    <a href="/" class="mybtn">Home</a>
+</div>
+<script src="assets/addquestion.js"></script>
+{{template "footer"}}
