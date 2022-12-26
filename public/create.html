@@ -1,23 +1,34 @@
 {{template "header"}}
 <h1>Setup a game now! :)</h1>
 
-<form action="/hostquiz" method="POST">
-    <div class="input-container">
-        <label for="host-name">Your name:</label><br>
-        <input type="text" id="host-name" name="playerName"><br>
+<div id="init-game-form">
+    <form onsubmit="return createGame(event)">
+        <div class="input-container">
+            <label for="host-name">Your name:</label><br>
+            <input type="text" id="host-name" name="player-name"><br>
 
-        <select name="subject-name">
-            <option selected>Select a Quiz Subject</option>
-            {{range .}}
-            <option class="myoption" value="{{.Name}}">{{.Name}}</option>
-            {{end}}
-        </select><br>
-        <label for="question-amount">Amount of questions:</label><br>
-        <input type="number" id="question-amount" name="questionAmount" min="1" max="40" placeholder="20">
-        <br>
-        <input class="mybtn" type="submit" value="Let's go!"><br>
-</form>
-<a href="/" class="mybtn">Go Back</a>
+            <select name="subject-name" id="subject-name">
+                <option selected>Select a Quiz Subject</option>
+                {{range .}}
+                <option class="myoption" value="{{.Name}}">{{.Name}}</option>
+                {{end}}
+            </select><br>
+            <label for="question-amount">Amount of questions:</label><br>
+            <input type="number" id="question-amount" name="question-amount" min="1" max="40" placeholder="20">
+        </div>
+        <button class="mybtn">Lets go!</button>
+    </form>
+    <a href="/" class="mybtn">Go Back</a>
+</div>
 
-<script src="assets/gamecreator.js"></script>
+<section id="init-section">
+    <p>The game has been created, you can invite players by telling of sending them this quiz code:</p>
+    <h2 id="quiz-slug"></h2>
+    <a id="to-quiz-link" href="/game/">Start quizzin</a>
+</section>
+
+
+
+<script type="text/javascript" src="assets/gamecreator.js"></script>
+
 {{template "footer"}}

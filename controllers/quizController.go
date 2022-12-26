@@ -23,15 +23,25 @@ func createQuiz(w http.ResponseWriter, r *http.Request){
         QuizSlug: createSlug(),
         Questions: getQuestions(subjectId, questionAmount),
     }
+
+    dbconn.DB.Create(&newQuiz)
+
+    setHost := models.Result{
+        QuizId: newQuiz.ID,
+        PlayerName: r.FormValue("player-name"),
+        PlayerSlug: createSlug(),
+        IsHost: true,
+    }
     
-    fmt.Println(newQuiz)
-    
+    dbconn.DB.Create(&setHost)
+
+    fmt.Fprintf(w, newQuiz.QuizSlug+"|"+setHost.PlayerSlug)
 }
 
 func createSlug() string{
     rand.Seed(time.Now().UnixNano())
 
-    var runes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    var runes = []rune("abcdefghijklmnopqrstuvwxyz")
     s := make([]rune,6)
     for i := range s{
         s[i] = runes[rand.Intn(len(runes))]
@@ -47,6 +57,9 @@ func getQuestions(subjectId uint, questionAmount int) string{
     if len(questionIds) < questionAmount{
         questionAmount = len(questionIds)
     }
+
+    rand.Shuffle(len(questionIds), func(i, j int) { questionIds[i], questionIds[j] = questionIds[j], questionIds[i] })
+
 
     var returnString string
     for i:=0; i<questionAmount ; i++{

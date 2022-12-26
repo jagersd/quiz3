@@ -4,7 +4,7 @@ import "time"
 
 type Result struct {
 	ID         uint `json:"id" gorm:"primary_key"`
-	AquizId    uint
+	QuizId    uint
 	PlayerName string
 	PlayerSlug string
     IsHost     bool `gorm:"default:false"`

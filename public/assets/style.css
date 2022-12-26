@@ -2,3 +2,8 @@ body{
     background-color: black;
     color: snow;
 }
+
+/*functional*/
+#init-section{
+    display: none;
+}
