@@ -1,5 +1,5 @@
 connectToSocket()
-
+const player = sessionStorage.getItem("playerSlug")
 
 function connectToSocket(){
     const submitForm = document.getElementById("answer-submit-form")
@@ -22,7 +22,7 @@ function connectToSocket(){
     }
 
     submitForm.onsubmit = () => {
-        conn.send("hallo!")
+        conn.send(player + "|" + "hallo!")
         return false
     }
 

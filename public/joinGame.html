@@ -1,6 +1,23 @@
 {{template "header"}}
 
-<input type="text" name="quizSlug">
-<button type="">JOIN</button>
+<form id="join-quiz-form" onsubmit="return joinGame(event)">
+    <label for="player-name">Your name:</label>
+    <input type="text" name="player" id="player-name">
+    <br>
+    <label for="quiz-slug">Quiz Code:</label>
+    <input type="text" name="quizSlug" id="quiz-slug">
+    <br>
 
+    <button>Check-in</button>
+
+
+</form>
+
+<div id="init-section">
+    <p>Quiz Found you have been enrolled</p>
+    <p>Click here to start quizzin:</p>
+    <a id="to-quiz-link" href="/game/">Start</a>
+</div>
+
+<script type="text/javascript" src="assets/gamecreator.js"></script>
 {{template "footer"}}

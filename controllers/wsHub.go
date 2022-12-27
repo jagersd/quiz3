@@ -12,12 +12,14 @@ type subscription struct{
 
 type hub struct{
     rooms map[string]map[*connection]bool
+    sendToHost chan message
     broadcast chan message
     register chan subscription
     unregister chan subscription
 }
 
 var h = hub{
+    sendToHost: make(chan message),
     broadcast: make(chan message),
     register: make(chan subscription),
     unregister: make(chan subscription),
@@ -48,16 +50,33 @@ func (h *hub) run() {
 		case m := <-h.broadcast:
 			connections := h.rooms[m.room]
 			for c := range connections {
-				select {
-				case c.send <- m.data:
-				default:
-					close(c.send)
-					delete(connections, c)
-					if len(connections) == 0 {
-						delete(h.rooms, m.room)
-					}
-				}
+                if c.host == false{
+                    select {
+                    case c.send <- m.data:
+                    default:
+                        close(c.send)
+                        delete(connections, c)
+                        if len(connections) == 0 {
+                            delete(h.rooms, m.room)
+                        }
+                    }
+                }
 			}
+        case x := <-h.sendToHost:
+            connections := h.rooms[x.room]
+            for c:= range connections{
+                if c.host == true{
+                    select{
+                    case c.send <- x.data:
+                    default:
+                        close(c.send)
+                        delete(connections, c)
+                        if len(connections) == 0 {
+                            delete(h.rooms, x.room)
+                        }
+                    }
+                }
+            }
 		}
 	}
 }

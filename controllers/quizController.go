@@ -71,6 +71,35 @@ func getQuestions(subjectId uint, questionAmount int) string{
     return strings.TrimSuffix(returnString,",")
 }
 
+func joinGame(w http.ResponseWriter, r *http.Request){
+    var quiz models.Quiz
+    
+    // check whether quiz exists
+    dbconn.DB.Where(&models.Quiz{QuizSlug: r.FormValue("quiz-slug")}).Find(&quiz)
+    if quiz.ID == 0{
+        templates.ExecuteTemplate(w,"joinGame.html",nil)
+        return
+    }
+    
+    // check whether playername already enrolled if not, a new one is created
+    var newResult models.Result
+
+    dbconn.DB.Where(&models.Result{QuizId:quiz.ID, PlayerName:r.FormValue("player-name")}).Find(&newResult)
+
+    fmt.Println(newResult)
+    if newResult.ID != 0{
+        fmt.Fprintf(w,newResult.PlayerSlug)
+        return
+    } else {
+        newResult.QuizId = quiz.ID
+        newResult.PlayerSlug = createSlug()
+        newResult.PlayerName = r.FormValue("player-name")
+        dbconn.DB.Create(&newResult)
+        fmt.Fprintf(w, newResult.PlayerSlug)
+    }
+
+}
+
 
 
 

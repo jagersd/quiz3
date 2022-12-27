@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -25,6 +25,7 @@ var upgrader = websocket.Upgrader{
 type connection struct{
     ws *websocket.Conn
     send chan []byte
+    host bool
 }
 
 func (s subscription) readPump() {
@@ -44,9 +45,16 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-        msg,_ = json.Marshal(quizStates[s.room])
-		m := message{msg, s.room}
+        player, msgString := ParseMessage(msg)
+        if player == quizStates[s.room].Host {
+            c.host = true
+        }
+        playermsg, hostmsg := createResponse(player, msgString, quizStates[s.room])
+		m := message{playermsg, s.room}
 		h.broadcast <- m
+
+        x := message{hostmsg, s.room}
+        h.sendToHost <- x
 	}
 }
 
@@ -93,4 +101,11 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	h.register <- s
 	go s.writePump()
 	go s.readPump()
+}
+
+func ParseMessage(received []byte) (string, string){
+    msgString := string(received)
+    msgArray := strings.Split(msgString,"|")
+    
+    return msgArray[0], msgArray[1]
 }

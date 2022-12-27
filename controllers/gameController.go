@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"quiz3/dbconn"
@@ -12,7 +13,10 @@ import (
 
 type quizState struct{
     Host string
-    CurrentQuestion int
+    Started bool
+    CurrentQuestion string
+    Options []string
+    Answer string
     QuestionCounter int
     LastResult map[string]int
     Total map[string]int
@@ -27,7 +31,7 @@ func mainRoutine(w http.ResponseWriter, r *http.Request) {
     if !ok{   
         quizStates[quizSlug] = quizState{
             Host: getHost(quizSlug),
-            QuestionCounter: 0,
+            Started: false,
         }
    }
 
@@ -47,6 +51,25 @@ func getQuizId(quizSlug string) uint{
 
     dbconn.DB.Model(&models.Quiz{QuizSlug: quizSlug}).Select("id").First(&quizId)
     return quizId
+}
+
+func createResponse(player string, message string, room quizState) ([]byte, []byte){
+    var playerResponse []byte
+    var hostResponse []byte
+
+    hostResponse,_ = json.Marshal(room)
+
+    type participantResponse struct{
+        Options []string
+    }
+
+    var responseToParticipant participantResponse
+    responseToParticipant.Options = room.Options
+
+    playerResponse,_ = json.Marshal(responseToParticipant)
+
+    return playerResponse, hostResponse
+
 }
 
 func cleanUp(){
