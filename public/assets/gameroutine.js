@@ -1,6 +1,8 @@
 connectToSocket()
 
+
 function connectToSocket(){
+    const submitForm = document.getElementById("answer-submit-form")
     let conn;
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
@@ -17,6 +19,11 @@ function connectToSocket(){
 
     conn.onclose = (event)=>{
         console.log("connection closed:", event)
+    }
+
+    submitForm.onsubmit = () => {
+        conn.send("hallo!")
+        return false
     }
 
     conn.onmessage = (event)=>{

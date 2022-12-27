@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -44,6 +44,7 @@ func (s subscription) readPump() {
 			}
 			break
 		}
+        msg,_ = json.Marshal(quizStates[s.room])
 		m := message{msg, s.room}
 		h.broadcast <- m
 	}
@@ -82,7 +83,6 @@ func (s *subscription) writePump() {
 func serveWs(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     roomId := vars["quizSlug"]
-	fmt.Print(roomId)
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err.Error())

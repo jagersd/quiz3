@@ -14,6 +14,8 @@ import (
 
 func createQuiz(w http.ResponseWriter, r *http.Request){
     var subjectId uint
+
+    cleanUp()
     
     questionAmount,_ := strconv.Atoi(r.FormValue("question-amount"))
 

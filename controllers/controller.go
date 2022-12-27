@@ -15,6 +15,8 @@ type subject struct{
 }
 
 func New() http.Handler{
+    go h.run()
+
     templates = template.Must(templates.ParseGlob("public/*.html"))
 
     r := mux.NewRouter()

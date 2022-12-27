@@ -20,10 +20,6 @@ func createPage(w http.ResponseWriter, r *http.Request){
     templates.ExecuteTemplate(w,"create.html", getSubjects())
 }
 
-func mainRoutine(w http.ResponseWriter, r *http.Request) {
-    templates.ExecuteTemplate(w,"gameroutine.html",nil)
-}
-
 
 
 
