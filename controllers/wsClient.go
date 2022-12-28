@@ -45,13 +45,13 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-        player, msgString := ParseMessage(msg)
+        player,msgType,msgString := ParseMessage(msg)
         if player == quizStates[s.room].Host {
             c.host = true
         }
-        playermsg, hostmsg := createResponse(player, msgString, quizStates[s.room])
+        playermsg, hostmsg := createResponse(player,msgType, msgString, quizStates[s.room])
 		m := message{playermsg, s.room}
-		h.broadcast <- m
+		h.sendToPlayers <- m
 
         x := message{hostmsg, s.room}
         h.sendToHost <- x
@@ -103,9 +103,13 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	go s.readPump()
 }
 
-func ParseMessage(received []byte) (string, string){
+func ParseMessage(received []byte) (string,string,string){
     msgString := string(received)
     msgArray := strings.Split(msgString,"|")
+
+    if len(msgArray) != 3{
+        return "","",""
+    }
     
-    return msgArray[0], msgArray[1]
+    return msgArray[0], msgArray[1], msgArray[2]
 }

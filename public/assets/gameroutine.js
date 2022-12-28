@@ -11,6 +11,7 @@ function connectToSocket(){
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
+        conn.send(player + "|joined|" + sessionStorage.getItem("playerName") + " just joined the game joined")
     }
 
     conn.onerror = (err) =>{
@@ -22,14 +23,28 @@ function connectToSocket(){
     }
 
     submitForm.onsubmit = () => {
-        conn.send(player + "|" + "hallo!")
+        conn.send(player + "|answer|" + "hallo!")
         return false
     }
 
     conn.onmessage = (event)=>{
-        console.log("The following was received through the websocket:", event)
+        parseMessage(event.data)
+        console.log(event.data)
     }
 
 }
 
+function parseMessage(message){
+    let msgType = ""
+    let msgContent = ""
+    if (message.includes("|")){
+        msgArray = message.split("|")
+        console.log(msgArray)
+        msgType = msgArray[0]
+        msgContent = msgArray[1]
+    } else {
+        msgType = "generic"
+        msgContent = message
+    }
+}
 

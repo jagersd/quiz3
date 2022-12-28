@@ -20,6 +20,7 @@ async function createGame(event){
     if (responseString != ""){
         responseElements = responseString.split("|")
         sessionStorage.setItem("playerSlug", responseElements[1])
+        sessionStorage.setItem("playerName", document.getElementById("host-name").value)
         quizSlug = responseElements[0]
 
         document.getElementById("quiz-slug").innerText = quizSlug
@@ -43,11 +44,16 @@ async function joinGame(event){
     let responseString = ""
     responseString = await response.text()
 
-    if (responseString != ""){
+    if (responseString != "" && responseString != "Quiz already started"){
         sessionStorage.setItem("playerSlug", responseString)
+        sessionStorage.setItem("playerName", document.getElementById("player-name").value)
 
         initSection.style.display ="block"
         document.getElementById("to-quiz-link").href="/game/"+quizCode
+    }
+
+    if (responseString == "Quiz already started"){
+        document.getElementById("already-started").style.display = "block"
     }
 
 }

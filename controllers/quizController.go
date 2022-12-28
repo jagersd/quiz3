@@ -36,6 +36,14 @@ func createQuiz(w http.ResponseWriter, r *http.Request){
     }
     
     dbconn.DB.Create(&setHost)
+    quizStates[newQuiz.QuizSlug]=quizState{
+        Host: setHost.PlayerSlug,
+        Started: false,
+        QuestionCounter: 0,
+        CurrentQuestion: "",
+        CurrentResult: make(map[string]uint8),
+        Total: make(map[string]uint),
+    }
 
     fmt.Fprintf(w, newQuiz.QuizSlug+"|"+setHost.PlayerSlug)
 }
@@ -73,31 +81,41 @@ func getQuestions(subjectId uint, questionAmount int) string{
 
 func joinGame(w http.ResponseWriter, r *http.Request){
     var quiz models.Quiz
+
+    fmt.Println(r.FormValue("quiz-code"))
     
     // check whether quiz exists
-    dbconn.DB.Where(&models.Quiz{QuizSlug: r.FormValue("quiz-slug")}).Find(&quiz)
+    dbconn.DB.Model(&models.Quiz{}).Where("quiz_slug = ?", r.FormValue("quiz-code")).First(&quiz)
     if quiz.ID == 0{
-        templates.ExecuteTemplate(w,"joinGame.html",nil)
+        templates.ExecuteTemplate(w,"errcatcher.html","Quiz not found")
         return
     }
     
     // check whether playername already enrolled if not, a new one is created
     var newResult models.Result
 
-    dbconn.DB.Where(&models.Result{QuizId:quiz.ID, PlayerName:r.FormValue("player-name")}).Find(&newResult)
+    dbconn.DB.Where(&models.Result{QuizId:quiz.ID, PlayerName:r.FormValue("player-name")}).First(&newResult)
 
     fmt.Println(newResult)
     if newResult.ID != 0{
         fmt.Fprintf(w,newResult.PlayerSlug)
         return
-    } else {
-        newResult.QuizId = quiz.ID
-        newResult.PlayerSlug = createSlug()
-        newResult.PlayerName = r.FormValue("player-name")
-        dbconn.DB.Create(&newResult)
-        fmt.Fprintf(w, newResult.PlayerSlug)
+    }
+    fmt.Println(quiz.ID)
+    // check whether the quiz already started
+
+    if quiz.ID != 0 && quiz.Started == true{
+        fmt.Fprintf(w, "Quiz already started")
+        return
     }
 
+    // Everything checked, let the player join
+    newResult.QuizId = quiz.ID
+    newResult.PlayerSlug = createSlug()
+    newResult.PlayerName = r.FormValue("player-name")
+    dbconn.DB.Create(&newResult)
+
+    fmt.Fprintf(w, newResult.PlayerSlug)
 }
 
 

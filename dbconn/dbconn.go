@@ -1,12 +1,14 @@
 package dbconn
 
 import (
+	"fmt"
 	"log"
-    "fmt"
+	"quiz3/models"
+
 	"gopkg.in/ini.v1"
-    "gorm.io/driver/postgres"
-    "gorm.io/gorm"
-    "quiz3/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -21,7 +23,10 @@ func getDsn() string {
 
 func Connect(migrate bool) {
 	dsn := getDsn()
-	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+        //change to Silent before production
+        Logger: logger.Default.LogMode(logger.Info),
+    })
 	if err != nil {
 		log.Fatal("failed to connect database", err)
 	} else {
