@@ -36,7 +36,7 @@ func createQuiz(w http.ResponseWriter, r *http.Request){
     }
     
     dbconn.DB.Create(&setHost)
-    quizStates[newQuiz.QuizSlug]=quizState{
+    quizStates[newQuiz.QuizSlug]=&quizState{
         Host: setHost.PlayerSlug,
         Started: false,
         QuestionCounter: 0,

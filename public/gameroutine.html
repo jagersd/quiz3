@@ -1,18 +1,14 @@
 {{template "header"}}
 
-<div class="host-content">
-    <p>Welcome to the waiting room. The game has not yet started. Please wait for the host to start</p>
-</div>
+{{.}}
 
-<div id="player-list">
-
-</div>
+<p id="waiting-room"></p>
 
 <form id="answer-submit-form">
+    <div id="input-section">
+    </div>
     <input type="submit">
 </form>
-
-{{.Host}}
 
 <script type="text/javascript" src="/assets/gameroutine.js"></script>
 {{template "footer"}}

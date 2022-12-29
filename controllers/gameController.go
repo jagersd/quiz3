@@ -24,28 +24,22 @@ type quizState struct{
     Total map[string]uint
 }
 
-var quizStates = make(map[string]quizState)
+var quizStates = make(map[string]*quizState)
 
 func mainRoutine(w http.ResponseWriter, r *http.Request) {
     quizSlug := mux.Vars(r)["quizSlug"]
     
-    _, ok := quizStates[quizSlug]
+    quiz, ok := quizStates[quizSlug]
     if !ok{
         //try to recreate quizState
-        quizStates[quizSlug] = quizState{
-            Host: getHost(quizSlug),
-            Started: false,
-            CurrentResult: make(map[string]uint8),
-
-        }
+        templates.ExecuteTemplate(w, "errcatcher.htlm", "State lost for this quiz")
    }
-
-   updateQuizState(quizStates[quizSlug], quizSlug)
+   updateQuizState(quiz, quizSlug)
    
-   templates.ExecuteTemplate(w,"gameroutine.html", nil)
+   templates.ExecuteTemplate(w,"gameroutine.html", quizSlug)
 }
 
-func updateQuizState(quiz quizState, quizSlug string){
+func updateQuizState(quiz *quizState, quizSlug string){
     quizId := getQuizId(quizSlug)
     var result []models.Result
     
@@ -64,7 +58,10 @@ func updateQuizState(quiz quizState, quizSlug string){
 
 func getHost(quizSlug string) string{
     var host string
-    dbconn.DB.Model(&models.Result{QuizId: getQuizId(quizSlug), IsHost: true}).Select("player_slug").First(&host)
+    dbconn.DB.Model(&models.Result{}).
+    Where("quiz_id = ? AND is_host = ?",getQuizId(quizSlug), true).
+    Select("player_slug").
+    First(&host)
 
     return host
 }
@@ -72,28 +69,32 @@ func getHost(quizSlug string) string{
 func getQuizId(quizSlug string) uint{
     var quizId uint
 
-    dbconn.DB.Model(&models.Quiz{QuizSlug: quizSlug}).Select("id").First(&quizId)
+    dbconn.DB.Model(&models.Quiz{}).Where("quiz_slug = ?", quizSlug).Select("id").First(&quizId)
     return quizId
 }
 
-func createResponse(player string, messageType string, message string, room quizState) ([]byte, []byte){
+func createResponse(player string, messageType string, message string, room *quizState) ([]byte, []byte){
     var playerResponse []byte
     var hostResponse []byte
-
+    
     if messageType == "answer" && player == room.Host{
-        moveToNextQuestion(&room)
+        room.moveToNextQuestion()
     }
 
     if messageType == "answer" || messageType == "joined"{
         hostResponse,_ = json.Marshal(room)
 
         type participantResponse struct{
+            Started bool
+            QuestionCounter uint
             QuestionType uint
             Options []string
             CurrentResult map[string]uint8
         }
 
         var responseToParticipant participantResponse
+        responseToParticipant.Started = room.Started
+        responseToParticipant.QuestionCounter = room.QuestionCounter
         responseToParticipant.QuestionType = room.QuestionType
         responseToParticipant.Options = room.Options
         responseToParticipant.CurrentResult = room.CurrentResult
@@ -107,21 +108,27 @@ func createResponse(player string, messageType string, message string, room quiz
     return errorMessage, errorMessage
 }
 
-func moveToNextQuestion(quiz *quizState){
+func (quiz *quizState) moveToNextQuestion(){
     counter := quiz.QuestionCounter
+
     var quizId uint
 
-    dbconn.DB.Model(&models.Result{}).Where("is_host = ?", true).Select("quiz_id").First(&quizId)
+    dbconn.DB.Model(&models.Result{}).Where("player_slug = ? AND is_host = ?",quiz.Host, true).Select("quiz_id").First(&quizId)
     
     //Register quiz as Started
     if counter == 0 {
         dbconn.DB.Model(&models.Quiz{ID:quizId}).Update("started", true)
+        quiz.Started = true
     }
 
     var questionString string
-    dbconn.DB.Model(&models.Quiz{ID:quizId}).Select("questions").First(&questionString)
+    dbconn.DB.Model(&models.Quiz{}).Where("id = ?",quizId).Select("questions").First(&questionString)
 
     questionArray := strings.Split(questionString,",")
+
+    if counter >= uint(len(questionArray)) {
+        return
+    }
 
     var question models.Question
     dbconn.DB.Model(&models.Question{}).Where("id = ?", questionArray[counter]).First(&question)
@@ -129,19 +136,21 @@ func moveToNextQuestion(quiz *quizState){
     quiz.CurrentQuestion = question.Body
     quiz.Answer = question.Answer
     quiz.QuestionType = question.Type
+    var options []models.Option
+    quiz.Options = nil
     
     if question.Type == 1{
-        var options []models.Option
         dbconn.DB.Model(&models.Option{}).Where("question_id = ?", question.ID).Find(&options)
 
         for _,q := range options{
             quiz.Options = append(quiz.Options, q.Option)   
         }
-
+        quiz.Options = append(quiz.Options, quiz.Answer)
     }
+    
+    counter += 1
 
-    quiz.QuestionCounter += 1
-
+    quiz.QuestionCounter = counter
 }
 
 func cleanUp(){
