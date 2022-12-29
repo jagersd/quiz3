@@ -29,6 +29,7 @@ func New() http.Handler{
     r.HandleFunc("/join", joinPage).Methods("GET")
     r.HandleFunc("/joingame", joinGame).Methods("POST")
     r.HandleFunc("/game/{quizSlug}", mainRoutine).Methods("GET")
+    r.HandleFunc("/finished/{quizSlug}", showResults).Methods("GET")
     r.HandleFunc("/create", createPage).Methods("GET")
     r.HandleFunc("/create", createQuiz).Methods("POST")
     r.HandleFunc("/getsubjects", allSubjects).Methods("GET")

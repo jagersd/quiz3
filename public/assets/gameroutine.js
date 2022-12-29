@@ -2,8 +2,9 @@ connectToSocket()
 const player = sessionStorage.getItem("playerSlug")
 const inputSection = document.getElementById("input-section")
 const waitingroom = document.getElementById("waiting-room")
+const submitButton = document.getElementById("submit-answer-btn")
 let questionCounter = null
-let answerValue
+let questionType = 0
 
 
 function connectToSocket(){
@@ -27,23 +28,23 @@ function connectToSocket(){
         console.log("connection closed:", event)
     }
 
-    submitForm.onsubmit = () => {
-
+    submitForm.onsubmit = (e) => {
+        e.preventDefault
         if(questionCounter == null){
             conn.send(player + "|answer|" + "lets start")
         } else {
-            let answer = document.querySelector('input[name="answer"]:checked').value ?? null 
-            if (answer == null){
+            let answer = null 
+            if (questionType == 2){
                 answer = document.getElementById("open-answer").value
             }
-
-            if (answer != "" || answer == null){
-                console.log(answer)
-                //conn.send(player + "|answer|" + answer)
+            if (questionType == 1){
+                answer = document.querySelector('input[name="answer"]:checked').value
+            }
+            if (answer != "" || answer != null){
+                conn.send(player + "|answer|" + answer)
+                submitButton.style.display = "none"
             }
         }
-
-
         return false
     }
 
@@ -87,8 +88,10 @@ function pushToFront(messageContent){
     if (questionCounter == messageContent.QuestionCounter){
         return
     } else {
+        submitButton.style.display = "block"
         questionCounter = messageContent.QuestionCounter
         inputSection.innerHTML=""
+        questionType = messageContent.QuestionType
     }
     
     if (messageContent.QuestionType == 1) {
@@ -104,6 +107,7 @@ function pushToFront(messageContent){
 
             inputSection.append(option)
             inputSection.append(label)
+
         }
     } else {
         let openAnwer = document.createElement("input")

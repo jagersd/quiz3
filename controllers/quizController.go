@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 
@@ -40,6 +42,7 @@ func createQuiz(w http.ResponseWriter, r *http.Request){
         Host: setHost.PlayerSlug,
         Started: false,
         QuestionCounter: 0,
+        LastQuestion: uint(questionAmount),
         CurrentQuestion: "",
         CurrentResult: make(map[string]uint8),
         Total: make(map[string]uint),
@@ -116,6 +119,21 @@ func joinGame(w http.ResponseWriter, r *http.Request){
     dbconn.DB.Create(&newResult)
 
     fmt.Fprintf(w, newResult.PlayerSlug)
+}
+
+func showResults(w http.ResponseWriter, r *http.Request){
+    quizSlug := mux.Vars(r)["quizSlug"]
+    var finalresult []models.Result
+    quizId := getQuizId(quizSlug)
+
+    dbconn.DB.Model(&models.Result{}).
+    Where("quiz_id = ?", quizId).
+    Select("player_name", "total").
+    Order("total desc").
+    Find(&finalresult)
+
+
+    templates.ExecuteTemplate(w, "finished.html", finalresult)
 }
 
 

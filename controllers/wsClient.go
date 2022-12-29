@@ -49,7 +49,7 @@ func (s subscription) readPump() {
         if player == quizStates[s.room].Host {
             c.host = true
         }
-        playermsg, hostmsg := createResponse(player,msgType, msgString, quizStates[s.room])
+        playermsg, hostmsg := createResponse(player, msgType, msgString, quizStates[s.room])
 		m := message{playermsg, s.room}
 		h.sendToPlayers <- m
 
