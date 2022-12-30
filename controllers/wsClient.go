@@ -103,6 +103,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	go s.readPump()
 }
 
+//returning player -- messagetype -- actual message
 func ParseMessage(received []byte) (string,string,string){
     msgString := string(received)
     msgArray := strings.Split(msgString,"|")

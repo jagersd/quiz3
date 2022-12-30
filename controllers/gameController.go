@@ -43,18 +43,32 @@ func mainRoutine(w http.ResponseWriter, r *http.Request) {
 
 func updateQuizState(quiz *quizState){
     quizId := getQuizIdByHost(quiz.Host)
-    var result []models.Result
+
+    counter := quiz.QuestionCounter
+    if counter == 0 {
+        counter = 1
+    }
+    
+    type currentResult struct{
+        Playername string
+        Current uint8
+        Total uint
+    }
+
+    var results []currentResult
 
     //update current question result
-    toPullResult := fmt.Sprintf("result%d",quiz.QuestionCounter)
+    toPullResult := fmt.Sprintf("result%d AS current",counter)
     if toPullResult == "result0"{
         toPullResult = "result1"
     }
-    dbconn.DB.Where("quiz_id = ?", quizId).Select("player_name", toPullResult, "total").Find(&result) 
 
-    for _,r := range result{
-        quiz.CurrentResult[r.PlayerName] = r.Result1
-        quiz.Total[r.PlayerName] = r.Total
+    dbconn.DB.Table("results").Where("quiz_id = ?", quizId).Select("player_name AS playername", toPullResult , "total").Find(&results) 
+    fmt.Println(results)
+
+    for _,r := range results{
+        quiz.CurrentResult[r.Playername] = r.Current
+        quiz.Total[r.Playername] = r.Total
     }
 }
 
@@ -153,8 +167,9 @@ func (quiz *quizState) moveToNextQuestion(){
     }
 
     counter += 1
-
     quiz.QuestionCounter = counter
+
+    updateQuizState(quiz)
 }
 
 func evaluateAnswer(player string, answer string, room *quizState){

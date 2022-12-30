@@ -4,7 +4,7 @@ body{
 }
 
 /*functional*/
-#init-section, #already-started{
+#init-section, #already-started, #host-section{
     display: none;
 }
 
