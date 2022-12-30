@@ -25,7 +25,7 @@ func Connect(migrate bool) {
 	dsn := getDsn()
 	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
         //change to Silent before production
-        Logger: logger.Default.LogMode(logger.Info),
+        Logger: logger.Default.LogMode(logger.Silent),
     })
 	if err != nil {
 		log.Fatal("failed to connect database", err)

@@ -1,5 +1,15 @@
 {{template "header"}}
 
-{{.}}
 
+<ul>
+{{ range .}}
+    {{ if eq .IsHost false }}
+    <li>{{ .PlayerName }} -- {{ .Total }} -- {{ .IsHost }}</li>
+    {{ end }}
+
+    {{ if eq .IsHost true}}
+    <h3>Thanks for hosting {{.PlayerName}}</h3>
+    {{ end }}
+{{ end }}
+</ul>
 {{template "footer"}}

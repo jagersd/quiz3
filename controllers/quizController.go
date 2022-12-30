@@ -84,13 +84,11 @@ func getQuestions(subjectId uint, questionAmount int) string{
 
 func joinGame(w http.ResponseWriter, r *http.Request){
     var quiz models.Quiz
-
-    fmt.Println(r.FormValue("quiz-code"))
     
     // check whether quiz exists
     dbconn.DB.Model(&models.Quiz{}).Where("quiz_slug = ?", r.FormValue("quiz-code")).First(&quiz)
     if quiz.ID == 0{
-        templates.ExecuteTemplate(w,"errcatcher.html","Quiz not found")
+        fmt.Fprintf(w, "Error")
         return
     }
     
@@ -99,12 +97,10 @@ func joinGame(w http.ResponseWriter, r *http.Request){
 
     dbconn.DB.Where(&models.Result{QuizId:quiz.ID, PlayerName:r.FormValue("player-name")}).First(&newResult)
 
-    fmt.Println(newResult)
     if newResult.ID != 0{
         fmt.Fprintf(w,newResult.PlayerSlug)
         return
     }
-    fmt.Println(quiz.ID)
     // check whether the quiz already started
 
     if quiz.ID != 0 && quiz.Started == true{
@@ -128,7 +124,7 @@ func showResults(w http.ResponseWriter, r *http.Request){
 
     dbconn.DB.Model(&models.Result{}).
     Where("quiz_id = ?", quizId).
-    Select("player_name", "total").
+    Select("player_name", "total", "is_host").
     Order("total desc").
     Find(&finalresult)
 

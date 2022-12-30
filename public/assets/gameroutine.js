@@ -4,6 +4,7 @@ const player = sessionStorage.getItem("playerSlug")
 const inputSection = document.getElementById("input-section")
 const waitingroom = document.getElementById("waiting-room")
 const submitButton = document.getElementById("submit-answer-btn")
+const warningMessage = document.getElementById("host-warning-message")
 let questionCounter = 0
 let questionType = 0
 
@@ -17,7 +18,7 @@ function connectToSocket(){
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
-        conn.send(player + "|joined|" + sessionStorage.getItem("playerName") + " just joined the game joined")
+        conn.send(player + "|joined|" + "")
     }
 
     conn.onerror = (err) =>{
@@ -45,6 +46,7 @@ function connectToSocket(){
                 submitButton.style.display = "none"
             }
         }
+        
         return false
     }
 
@@ -82,6 +84,7 @@ function pushToFront(messageContent){
         }
         waitingroom.innerHTML = players
     }
+    setSubmitButtonState(messageContent.Host, messageContent.Started)
     //populate answers form when the Host moved to a new one
     if (questionCounter != messageContent.QuestionCounter){
         submitButton.style.display = "block"
@@ -125,6 +128,12 @@ function pushToFront(messageContent){
             pushSubtotals(messageContent.Total)
             pushCurrentResult(messageContent.CurrentResult)
         }
+
+        if (questionCounter == messageContent.LastQuestion){
+            const params = window.location.href.split("/")
+            document.getElementById("quiz-finished").style.display = "block"
+            document.getElementById("to-results-link").href = "/finished/"+params[params.length -1]
+        }
     }
 }
 
@@ -140,7 +149,9 @@ function pushSubtotals(totalObjects){
 function pushCurrentResult(resultObjects){
     let currentResultSection = document.getElementById("current-question-result")
     let resultContent = ""
+    let waitfor = []
     for (const key in resultObjects){
+        
         switch(resultObjects[key]){
             case 3:
                 resultContent += key + " : incorrect <br>"
@@ -149,9 +160,34 @@ function pushCurrentResult(resultObjects){
                 resultContent += key + " : correct <br>"
                 break;
             default:
+                waitfor.push(key)
                 resultContent += key + " : <br>"
-        
         }
     }
     currentResultSection.innerHTML = resultContent
+    if (waitfor.length <= 1){
+        submitButton.disabled = false
+    }
+}
+
+function setSubmitButtonState(host, started){
+    if (host == sessionStorage.getItem("playerSlug")){
+        if (started == true){
+            warningMessage.style.display = "none"
+            submitButton.value = "Next Question"
+            submitButton.disabled = true
+        } else {
+            warningMessage.style.display = "block"
+            submitButton.value = "Start the Quiz"
+        }
+    }
+
+    if (sessionStorage.getItem("playerSlug") != host){
+        warningMessage.innerText = "Please wait for the host to start the game :)"
+        if (started == false ){
+            submitButton.style.display = "none"
+        } else {
+            warningMessage.style.display = "none"
+        }
+    }
 }

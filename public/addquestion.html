@@ -10,7 +10,6 @@
     </form>
 
     <hr>
-    {{.}}
     <form action="/addquestion" method="POST">
     <select name="subject-name">
         <option selected>Select a Quiz Subject</option>
@@ -47,7 +46,7 @@
 
     <input type="submit" value="Submit">
     </form>
-    <a href="/" class="mybtn">Home</a>
+    <a href="/" class="backbtn">Home</a>
 </div>
 <script src="assets/addquestion.js"></script>
 {{template "footer"}}

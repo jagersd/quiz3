@@ -1,15 +1,21 @@
 {{template "header"}}
 
-<h5>Quiz code = {{.}}</h5>
+<h3>Quiz code = {{.}}</h3>
 
 
 <form id="answer-submit-form">
     <div id="input-section">
     </div>
-    <input id="submit-answer-btn" type="submit">
+    <div id="host-warning-message">
+        <p>Once started, others can no longer join.</p>
+    </div>
+    <input id="submit-answer-btn" type="submit" value="Submit my answer">
 </form>
 
-<p id="waiting-room"></p>
+<div class="waiting-section">
+    <i id="yet to answer:"></i>
+    <p id="waiting-room"></p>
+</div>
 
 <div id="host-section">
     <hr>
@@ -25,6 +31,9 @@
     <p id="subtotals"></p>
 </div>
 
+<div id="quiz-finished">
+    <a href="/finished/" id="to-results-link">Go to Results!</a>
+</div>
 
 <script type="text/javascript" src="/assets/gameroutine.js"></script>
 {{template "footer"}}

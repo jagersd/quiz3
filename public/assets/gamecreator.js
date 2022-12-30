@@ -44,7 +44,7 @@ async function joinGame(event){
     let responseString = ""
     responseString = await response.text()
 
-    if (responseString != "" && responseString != "Quiz already started"){
+    if (responseString != "" && responseString != "Quiz already started" && responseString != "Error"){
         sessionStorage.setItem("playerSlug", responseString)
         sessionStorage.setItem("playerName", document.getElementById("player-name").value)
 

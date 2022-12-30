@@ -64,7 +64,6 @@ func updateQuizState(quiz *quizState){
     }
 
     dbconn.DB.Table("results").Where("quiz_id = ?", quizId).Select("player_name AS playername", toPullResult , "total").Find(&results) 
-    fmt.Println(results)
 
     for _,r := range results{
         quiz.CurrentResult[r.Playername] = r.Current

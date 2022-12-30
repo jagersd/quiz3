@@ -1,10 +1,75 @@
+:root{
+    --lime: #abd699;
+    --bright: #ffe26a;
+    --teal: #75c9b7;
+    --mint: #c7ddcc;
+    --navy: #16123d;
+}
+
 body{
-    background-color: black;
-    color: snow;
+    background-color: var(--teal);
+    color: var(--navy);
+}
+
+a{
+    font-weight: bold;
+    padding: 15px;
+    background-color: var(--navy);
+    color: var(--lime);
+    border-radius: 10px;
+    margin-top: 5vh;
+}
+
+.backbtn{
+    bottom: 20px;
+    position: absolute;
+}
+
+button, input[type=submit]{
+    background-color: var(--mint);
+    color: var(--navy);
+    padding: 7px 14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+label{
+    font-weight: bold;
+}
+
+input[type=text], select{
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid var(--mint);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+input[type=number] {
+    width: 20%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid var(--mint);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+#host-warning-message{
+    font-weight: bold;
+    background-color: var(--bright);
+    border-radius: 10px;
+    max-width: 50%;
 }
 
 /*functional*/
-#init-section, #already-started, #host-section{
+#init-section, #already-started, #host-section, #quiz-finished{
     display: none;
 }
+
 
