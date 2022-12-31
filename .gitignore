@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-
+quiz3
 # Test binary, built with `go test -c`
 *.test
 
@@ -12,6 +12,7 @@
 *.out
 .air.toml
 conf.ini
+prod.config.ini
 
 # Dependency directories (remove the comment below to include it)
 vendor/

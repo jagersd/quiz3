@@ -15,8 +15,8 @@ func main(){
 
     handler := controllers.New() 
 
-    log.Println("Server will start at http://localhost:8001/")
-    log.Fatal(http.ListenAndServe(":8001", handler))
+    log.Println("The quiz3 Server wil start at http://localhost:8080/")
+    log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func CheckFlags() bool {

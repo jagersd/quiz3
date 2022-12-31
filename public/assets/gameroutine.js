@@ -14,7 +14,7 @@ function connectToSocket(){
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
 
-    conn = new WebSocket("ws://"+ document.location.host + "/ws/" + quizId)
+    conn = new WebSocket("wss://"+ document.location.host + "/ws/" + quizId)
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
@@ -96,6 +96,7 @@ function pushToFront(messageContent){
         if (messageContent.QuestionType == 1) {
             for (const key in messageContent.Options){
                 let option = document.createElement("input")
+                option.setAttribute("class", "answer-option")
                 option.setAttribute("type", "radio")
                 option.setAttribute("name", "answer")
                 option.setAttribute("id","option"+key)
@@ -103,9 +104,12 @@ function pushToFront(messageContent){
                 let label = document.createElement("label")
                 label.setAttribute("for","option"+key)
                 label.innerText = messageContent.Options[key]
+                
+                let lineBreak = document.createElement("br")
 
                 inputSection.append(option)
                 inputSection.append(label)
+                inputSection.append(lineBreak)
 
             }
         } else {

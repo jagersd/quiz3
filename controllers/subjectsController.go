@@ -10,24 +10,26 @@ import (
 )
 
 
+type subject struct{
+    Name string `json:"name"`
+    Description string `json:"description"`
+}
+
+
 func addSubject(w http.ResponseWriter, r *http.Request){
-    w.Header().Set("Content-Type", "application/json")
     
-    var input subject
-
-    err := json.NewDecoder(r.Body).Decode(&input)
-    if err != nil {
-        log.Println("There was an error decoding the request body into the struct", err)
-    }
-
     subjectIn := models.Subject{
-		Name:        input.Name,
-		Description: input.Description,
+		Name:        r.FormValue("subject-name"),
+		Description: r.FormValue("description"),
 	}
+
+    if subjectIn.Name == "" || subjectIn.Description == ""{
+        return
+    }
 
     dbconn.DB.Create(&subjectIn)
 
-    w.WriteHeader(http.StatusOK)
+    templates.ExecuteTemplate(w, "addquestion.html", nil)
 }
 
 func allSubjects(w http.ResponseWriter, r *http.Request){

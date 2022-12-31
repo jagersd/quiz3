@@ -9,11 +9,6 @@ import (
 
 var templates *template.Template
 
-type subject struct{
-    Name string `json:"name"`
-    Description string `json:"description"`
-}
-
 func New() http.Handler{
     go h.run()
 
