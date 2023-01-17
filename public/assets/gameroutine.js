@@ -5,6 +5,8 @@ const inputSection = document.getElementById("input-section")
 const waitingroom = document.getElementById("waiting-room")
 const submitButton = document.getElementById("submit-answer-btn")
 const warningMessage = document.getElementById("host-warning-message")
+const playerResultDisplay = document.getElementById("show-player-result")
+
 let questionCounter = 0
 let questionType = 0
 
@@ -139,6 +141,28 @@ function pushToFront(messageContent){
             document.getElementById("to-results-link").href = "/finished/"+params[params.length -1]
         }
     }
+
+    //show player result
+    if (questionCounter == messageContent.QuestionCounter && messageContent.Host != sessionStorage.getItem("playerSlug") && messageContent.Started == true){
+       for (const key in messageContent.CurrentResult) {
+           if (key == sessionStorage.getItem("playerName")){
+               switch(messageContent.CurrentResult[key]){
+                   case 1:
+                       playerResultDisplay.style.display = "block"
+                       document.getElementById("result-current-question").innerText = "That was correct!"
+                       break;
+                   case 3:
+                       playerResultDisplay.style.display = "block"
+                       playerResultDisplay.style.color = "red"
+                       document.getElementById("result-current-question").innerText = "Hmm...no good"
+                       break;
+                    default:
+                       playerResultDisplay.style.display = "none"
+                       playerResultDisplay.style.color = "#ffe26a"
+               }
+           }
+       }
+    }
 }
 
 function pushSubtotals(totalObjects){
@@ -155,7 +179,6 @@ function pushCurrentResult(resultObjects){
     let resultContent = ""
     let waitfor = []
     for (const key in resultObjects){
-        
         switch(resultObjects[key]){
             case 3:
                 resultContent += key + " : incorrect <br>"

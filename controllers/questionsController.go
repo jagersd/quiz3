@@ -33,5 +33,5 @@ func addQuestion(w http.ResponseWriter, r *http.Request){
         }
     }
 
-    templates.ExecuteTemplate(w,"addquestion.html", getSubjects())
+    templates.ExecuteTemplate(w,"addquestion.html", getSubjects(0))
 }

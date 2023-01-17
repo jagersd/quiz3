@@ -11,6 +11,7 @@ import (
 
 
 type subject struct{
+    Id uint `json:"id"`
     Name string `json:"name"`
     Description string `json:"description"`
 }
@@ -42,9 +43,18 @@ func allSubjects(w http.ResponseWriter, r *http.Request){
     }
 }
 
-func getSubjects() []subject{
+func getSubjects(questionAmount int) []subject{
     var subjects []subject
-    err := dbconn.DB.Model(models.Subject{}).Find(&subjects).Error
+    var err error
+
+    if questionAmount == 0 {
+        err = dbconn.DB.Model(models.Subject{}).Find(&subjects).Error
+    } else {
+        var availableSubjectIds []int
+        dbconn.DB.Model(models.Question{}).Select("subject_id").Group("subject_id").Having("COUNT(subject_id) > ?", questionAmount).Find(&availableSubjectIds)
+        err = dbconn.DB.Find(&subjects, availableSubjectIds).Error
+    }
+
     if err != nil{
         log.Println(err)
     }

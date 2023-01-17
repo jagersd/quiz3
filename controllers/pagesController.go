@@ -9,7 +9,7 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func addQuestionPage(w http.ResponseWriter, r *http.Request){
-    templates.ExecuteTemplate(w,"addquestion.html", getSubjects())
+    templates.ExecuteTemplate(w,"addquestion.html", getSubjects(0))
 }
 
 func joinPage(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +17,7 @@ func joinPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func createPage(w http.ResponseWriter, r *http.Request){
-    templates.ExecuteTemplate(w,"create.html", getSubjects())
+    templates.ExecuteTemplate(w,"create.html", getSubjects(10))
 }
 
 
