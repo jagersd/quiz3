@@ -6,6 +6,7 @@ const waitingroom = document.getElementById("waiting-room")
 const submitButton = document.getElementById("submit-answer-btn")
 const warningMessage = document.getElementById("host-warning-message")
 const playerResultDisplay = document.getElementById("show-player-result")
+const questionCounterDisplay = document.getElementById("question-counter-display")
 
 let questionCounter = 0
 let questionType = 0
@@ -33,6 +34,9 @@ function connectToSocket(){
 
     submitForm.onsubmit = (e) => {
         e.preventDefault
+        
+        questionCounterDisplay.classList.remove("next-question-display")
+        questionCounterDisplay.innerText = ""
         if(questionCounter == null){
             conn.send(player + "|answer|" + "lets start")
         } else {
@@ -93,6 +97,12 @@ function pushToFront(messageContent){
         questionCounter = messageContent.QuestionCounter
         inputSection.innerHTML=""
         questionType = messageContent.QuestionType
+        
+        //display question number animation
+        if (questionCounter >= 1){
+            questionCounterDisplay.innerText = "Question " + questionCounter
+            questionCounterDisplay.classList.add("next-question-display")
+        }
 
         // setup the participant view section
         if (messageContent.QuestionType == 1) {

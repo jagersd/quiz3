@@ -1,116 +1,138 @@
 :root{
-    --lime: #abd699;
-    --bright: #ffe26a;
-    --teal: #75c9b7;
-    --mint: #c7ddcc;
-    --navy: #16123d;
+  --lime: #abd699;
+  --bright: #ffe26a;
+  --teal: #75c9b7;
+  --mint: #c7ddcc;
+  --navy: #16123d;
 }
 
 body{
-    background-color: var(--teal);
-    color: var(--navy);
+  background-color: var(--teal);
+  color: var(--navy);
 }
 
 a{
-    font-weight: bold;
-    padding: 15px;
-    background-color: var(--navy);
-    color: var(--lime);
-    border-radius: 10px;
-    margin-top: 5vh;
+  font-weight: bold;
+  padding: 15px;
+  background-color: var(--navy);
+  color: var(--lime);
+  border-radius: 10px;
+  margin-top: 5vh;
 }
 
 .backbtn{
-    bottom: 20px;
-    position: absolute;
+  bottom: 20px;
+  position: absolute;
 }
 
 button, input[type=submit]{
-    background-color: var(--mint);
-    color: var(--navy);
-    padding: 7px 14px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 10px;
-    margin-top: 20px;
+  background-color: var(--mint);
+  color: var(--navy);
+  padding: 7px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 10px;
+  margin-top: 20px;
 }
 
 label{
-    font-weight: bold;
+  font-weight: bold;
 }
 
 input[type=text], select{
-    width: 50%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid var(--mint);
-    border-radius: 10px;
-    box-sizing: border-box;
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid var(--mint);
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
 input[type=number] {
-    width: 20%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid var(--mint);
-    border-radius: 10px;
-    box-sizing: border-box;
+  width: 20%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid var(--mint);
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
 #input-section label{
-    padding-left: 15px;
+  padding-left: 15px;
 }
 
 .answer-option{
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 input[type='radio']:after {
-    width: 15px;
-    height: 15px;
-    border-radius: 15px;
-    top: -2px;
-    left: -1px;
-    position: relative;
-    background-color: snow;
-    content: '';
-    display: inline-block;
-    visibility: visible;
-    border: 5px solid var(--mint);
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  background-color: snow;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 5px solid var(--mint);
 }
 
 input[type='radio']:checked:after {
-    width: 15px;
-    height: 15px;
-    border-radius: 15px;
-    top: -2px;
-    left: -1px;
-    position: relative;
-    background-color: var(--navy);
-    content: '';
-    display: inline-block;
-    visibility: visible;
-    border: 5px solid var(--mint);
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  background-color: var(--navy);
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 5px solid var(--mint);
 }
 
 .waiting-section{
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #host-warning-message{
-    font-weight: bold;
-    background-color: var(--bright);
-    border-radius: 10px;
-    max-width: 50%;
+  font-weight: bold;
+  background-color: var(--bright);
+  border-radius: 10px;
+  max-width: 50%;
 }
 
 /*functional*/
 #init-section, #already-started, #host-section, #quiz-finished, #show-player-result{
-    display: none;
+  display: none;
+}
+
+.next-question-wrapper{
+  transition: all 4s;
+  position: fixed;
+  top: 0;
+}
+
+.next-question-wrapper.next-question-display{
+  animation: show-question-counter 4s linear 1 forwards;
+  text-align: center;
+  font-size: xx-large;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: var(--teal);
+}
+
+@keyframes show-question-counter{
+  0%{display: block; min-height: 90vh; min-width: 90vw;}
+  80%{opacity: 1;}
+  99%{min-height: 90vh; min-width: 90vw;}
+  100% {opacity: 0; min-height: 1vh; min-width: 1vw;}
 }
 
 
