@@ -10,7 +10,7 @@
             <select name="subject-name" id="subject-name">
                 <option selected>Select a Quiz Subject</option>
                 {{range .}}
-                <option class="myoption" value="{{.Name}}">{{.Name}}</option>
+                <option class="myoption" value="{{.Name}}">{{.Name}} ( {{.Questioncount}} ) </option>
                 {{end}}
             </select><br>
             <label for="question-amount">Amount of questions:</label><br>

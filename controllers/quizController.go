@@ -21,7 +21,7 @@ func createQuiz(w http.ResponseWriter, r *http.Request){
     
     questionAmount,_ := strconv.Atoi(r.FormValue("question-amount"))
 
-    dbconn.DB.Model(&models.Subject{Name: r.FormValue("subject-name")}).Select("id").First(&subjectId)
+    dbconn.DB.Model(&models.Subject{}).Where("name = ?", r.FormValue("subject-name")).Select("id").First(&subjectId)
 
     newQuiz := models.Quiz{
         QuizSlug: createSlug(),
@@ -65,14 +65,13 @@ func createSlug() string{
 
 func getQuestions(subjectId uint, questionAmount int) string{
     var questionIds []uint
-    dbconn.DB.Model(&models.Question{ID: subjectId}).Pluck("ID", &questionIds)
-    
+    dbconn.DB.Model(&models.Question{}).Where("subject_id = ?", subjectId).Pluck("id",&questionIds)
+
     if len(questionIds) < questionAmount{
         questionAmount = len(questionIds)
     }
 
     rand.Shuffle(len(questionIds), func(i, j int) { questionIds[i], questionIds[j] = questionIds[j], questionIds[i] })
-
 
     var returnString string
     for i:=0; i<questionAmount ; i++{

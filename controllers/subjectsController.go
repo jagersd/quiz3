@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -15,6 +14,7 @@ type subject struct{
     Id uint `json:"id"`
     Name string `json:"name"`
     Description string `json:"description"`
+    Questioncount int `json:"questionCount"`
 }
 
 
@@ -51,24 +51,11 @@ func getSubjects(questionAmount int) []subject{
     if questionAmount == 0 {
         err = dbconn.DB.Model(models.Subject{}).Find(&subjects).Error
     } else {
-        type AvailableSubjects struct{
-            ids uint
-            questioncounter int
-        }
-
-        var availableSubjectIds []AvailableSubjects
-
-        dbconn.DB.Model(models.Question{}).
-        Select("subject_id AS ids", "COUNT(subject_id) AS questioncounter").Group("subject_id").
+        err = dbconn.DB.Model(models.Question{}).
+        Select("questions.subject_id AS id, subjects.name, COUNT(questions.subject_id) AS questioncount").Group("name,subject_id").
+        Joins("left join subjects on subjects.id = questions.subject_id").
         Having("COUNT(subject_id) > ?", questionAmount).
-        Scan(&availableSubjectIds)
-        
-
-        for _,p := range availableSubjectIds {
-            fmt.Println(p)
-        }
-
-        err = dbconn.DB.Find(&subjects, availableSubjectIds).Error
+        Scan(&subjects).Error
     }
 
     if err != nil{
