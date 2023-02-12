@@ -13,7 +13,7 @@ func addQuestion(w http.ResponseWriter, r *http.Request){
 
     questionType,_ := strconv.ParseUint(r.FormValue("question-type"),10,8)
 
-    dbconn.DB.Model(&models.Subject{Name: r.FormValue("subject-name")}).Select("id").First(&question.SubjectId)
+    dbconn.DB.Model(&models.Subject{}).Where("name = ?", r.FormValue("subject-name")).Select("id").First(&question.SubjectId)
     
     question.Body = r.FormValue("question-body")
     question.Answer = r.FormValue("question-answer")
