@@ -45,11 +45,11 @@ func allSubjects(w http.ResponseWriter, r *http.Request){
 }
 
 func getSubjects(questionAmount int) []subject{
-    var subjects []subject
     var err error
+    var subjects []subject
 
     if questionAmount == 0 {
-        err = dbconn.DB.Model(models.Subject{}).Find(&subjects).Error
+        err = dbconn.DB.Model(&models.Subject{}).Select("id,name").Find(&subjects).Error
     } else {
         err = dbconn.DB.Model(models.Question{}).
         Select("questions.subject_id AS id, subjects.name, COUNT(questions.subject_id) AS questioncount").Group("name,subject_id").
