@@ -7,6 +7,7 @@ const submitButton = document.getElementById("submit-answer-btn")
 const warningMessage = document.getElementById("host-warning-message")
 const playerResultDisplay = document.getElementById("show-player-result")
 const questionCounterDisplay = document.getElementById("question-counter-display")
+const questionImage = document.getElementById("question-image")
 
 let questionCounter = 0
 let questionType = 0
@@ -17,7 +18,7 @@ function connectToSocket(){
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
 
-    conn = new WebSocket("wss://"+ document.location.host + "/ws/" + quizId)
+    conn = new WebSocket("ws://"+ document.location.host + "/ws/" + quizId)
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
@@ -97,6 +98,10 @@ function pushToFront(messageContent){
         questionCounter = messageContent.QuestionCounter
         inputSection.innerHTML=""
         questionType = messageContent.QuestionType
+
+        if (messageContent.Attachment != ""){
+            questionImage.src = messageContent.Attachment
+        }
         
         //display question number animation
         if (questionCounter >= 1){
@@ -228,3 +233,13 @@ function setSubmitButtonState(host, started){
         }
     }
 }
+
+questionImage.addEventListener("click", ()=>{
+    let fullImage = document.getElementById("question-image-full");
+    fullImage.src = questionImage.src
+    fullImage.style.display = "block"
+
+    fullImage.addEventListener("click", ()=>{
+        fullImage.style.display = "none"
+    })
+})

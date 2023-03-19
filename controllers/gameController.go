@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"quiz3/dbconn"
 	"quiz3/models"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +18,7 @@ type quizState struct{
     Host string
     Started bool
     CurrentQuestion string
+    Attachment string
     QuestionType uint
     Options []string
     Answer string
@@ -26,7 +28,10 @@ type quizState struct{
     Total map[string]uint
 }
 
-var quizStates = make(map[string]*quizState)
+var (
+    storageUrl string = dbconn.GetImageStorageUrl()
+    quizStates = make(map[string]*quizState)
+)
 
 func mainRoutine(w http.ResponseWriter, r *http.Request) {
     quizSlug := mux.Vars(r)["quizSlug"]
@@ -102,6 +107,7 @@ func createResponse(player string, messageType string, message string, room *qui
         type participantResponse struct{
             Started bool
             QuestionCounter uint
+            Attachment string
             LastQuestion uint
             QuestionType uint
             Options []string
@@ -111,6 +117,7 @@ func createResponse(player string, messageType string, message string, room *qui
         var responseToParticipant participantResponse
         responseToParticipant.Started = room.Started
         responseToParticipant.QuestionCounter = room.QuestionCounter
+        responseToParticipant.Attachment = room.Attachment
         responseToParticipant.LastQuestion = room.LastQuestion
         responseToParticipant.QuestionType = room.QuestionType
         responseToParticipant.Options = room.Options
@@ -153,6 +160,7 @@ func (quiz *quizState) moveToNextQuestion(){
     quiz.CurrentQuestion = question.Body
     quiz.Answer = question.Answer
     quiz.QuestionType = question.Type
+    quiz.Attachment = storageUrl + strconv.FormatUint(uint64(question.ID), 10) + "." + question.Attachment
     var options []models.Option
     quiz.Options = nil
 

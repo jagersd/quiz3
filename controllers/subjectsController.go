@@ -54,7 +54,7 @@ func getSubjects(questionAmount int) []subject{
         err = dbconn.DB.Model(models.Question{}).
         Select("questions.subject_id AS id, subjects.name, COUNT(questions.subject_id) AS questioncount").Group("name,subject_id").
         Joins("left join subjects on subjects.id = questions.subject_id").
-        Having("COUNT(subject_id) > ?", questionAmount).
+        Having("COUNT(subject_id) >= ?", questionAmount).
         Scan(&subjects).Error
     }
 

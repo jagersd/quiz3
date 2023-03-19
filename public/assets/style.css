@@ -41,6 +41,12 @@ a{
   position: absolute;
 }
 
+#question-image{
+  max-width: 50vw;
+  border: 3px solid var(--mint);
+  border-radius: 10px;
+}
+
 button, input[type=submit]{
   background-color: var(--mint);
   color: var(--navy);
@@ -125,8 +131,16 @@ input[type='radio']:checked:after {
 }
 
 /*functional*/
-#init-section, #already-started, #host-section, #quiz-finished, #show-player-result{
+#init-section, #already-started, #host-section, #quiz-finished, #show-player-result, #question-image-full{
   display: none;
+}
+
+#question-image-full{
+  position: absolute;
+  top:5px;
+  max-height: 90%;
+  border: 5px solid var(--mint);
+  border-radius: 10px;
 }
 
 .next-question-wrapper{

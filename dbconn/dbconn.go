@@ -56,3 +56,11 @@ func AddDefaults(){
 	}
 	DB.Create(&qtypes)
 }
+
+func GetImageStorageUrl() string {
+    cfile, err := ini.Load("conf.ini")
+    if err != nil {
+        log.Fatal(err)
+    }
+    return cfile.Section("imagelocation").Key("url").String()
+}

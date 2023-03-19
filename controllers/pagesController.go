@@ -17,7 +17,7 @@ func joinPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func createPage(w http.ResponseWriter, r *http.Request){
-    templates.ExecuteTemplate(w,"create.html", getSubjects(10))
+    templates.ExecuteTemplate(w,"create.html", getSubjects(1))
 }
 
 

@@ -13,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
 func createQuiz(w http.ResponseWriter, r *http.Request){
     var subjectId uint
 
