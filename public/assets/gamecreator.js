@@ -1,4 +1,4 @@
-let formData = new FormData();
+const formData = new FormData();
 const initSection = document.getElementById("init-section")
 
 async function createGame(event){

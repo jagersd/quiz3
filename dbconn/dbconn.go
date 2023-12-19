@@ -24,33 +24,54 @@ func getDsn() string {
 func Connect(migrate bool) {
 	dsn := getDsn()
 	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-        //change to Silent before production
-        Logger: logger.Default.LogMode(logger.Silent),
-    })
+		//change to Silent before production
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+
 	if err != nil {
 		log.Fatal("failed to connect database", err)
 	} else {
 		fmt.Println("connected to database!")
 	}
 
-    if migrate == true{
-        fmt.Println("Executing database migration")
-        connection.AutoMigrate(
-            &models.Question{},
-            &models.Quiz{},
-            &models.Option{},
-            &models.Subject{},
-            &models.Result{},
-            &models.Qtype{},
-        )
-    }
+	if migrate == true {
+		fmt.Println("Executing database migration")
+		connection.AutoMigrate(
+			&models.Question{},
+			&models.Quiz{},
+			&models.Option{},
+			&models.Subject{},
+			&models.Result{},
+			&models.Qtype{},
+		)
+	}
 
-    DB = connection
+	DB = connection
 }
 
-func AddDefaults(){
-    Connect(false)
-    	qtypes := []models.Qtype{
+func CleanDb() {
+	Connect(false)
+	sqlDb, err := DB.DB()
+	if err != nil {
+		log.Fatal("unable to connect.")
+	}
+	defer sqlDb.Close()
+	fmt.Println("truncating tables.")
+	queries := []string{
+		"TRUNCATE quizzes;",
+		"TRUNCATE results;",
+	}
+	for _, q := range queries {
+		err := DB.Exec(q).Error
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func AddDefaults() {
+	Connect(false)
+	qtypes := []models.Qtype{
 		{Description: "Multiple Choice"},
 		{Description: "Open Question"},
 	}
@@ -58,9 +79,9 @@ func AddDefaults(){
 }
 
 func GetImageStorageUrl() string {
-    cfile, err := ini.Load("conf.ini")
-    if err != nil {
-        log.Fatal(err)
-    }
-    return cfile.Section("imagelocation").Key("url").String()
+	cfile, err := ini.Load("conf.ini")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return cfile.Section("imagelocation").Key("url").String()
 }

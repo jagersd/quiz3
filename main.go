@@ -1,35 +1,37 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
-    "flag"
 	"quiz3/controllers"
-    "quiz3/dbconn"
+	"quiz3/dbconn"
 )
 
+func main() {
+	migrate := CheckFlags()
+	dbconn.Connect(migrate)
 
-func main(){
-    migrate := CheckFlags()
-    dbconn.Connect(migrate)
+	handler := controllers.New()
 
-    handler := controllers.New() 
-
-    log.Println("The quiz3 Server wil start at http://localhost:8080/")
-    log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Println("The quiz3 Server wil start at http://localhost:8080/")
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func CheckFlags() bool {
 	addData := flag.Bool("d", false, "Add default db data")
 	dbMigrate := flag.Bool("m", false, "Migrate to new database")
+	cleanDb := flag.Bool("clean", false, "Remove all current quizzes")
 	flag.Parse()
 	if *addData == true {
-        dbconn.AddDefaults()
-		return false
-	} else if *dbMigrate == true {
+		dbconn.AddDefaults()
+	}
+	if *cleanDb == true {
+		dbconn.CleanDb()
+	}
+	if *dbMigrate == true {
 		return true
 	}
 
 	return false
 }
-

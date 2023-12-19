@@ -14,11 +14,10 @@ let questionType = 0
 
 function connectToSocket(){
     const submitForm = document.getElementById("answer-submit-form")
-    let conn;
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
 
-    conn = new WebSocket("ws://"+ document.location.host + "/ws/" + quizId)
+    const conn = new WebSocket("ws://"+ document.location.host + "/ws/" + quizId)
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
@@ -112,17 +111,17 @@ function pushToFront(messageContent){
         // setup the participant view section
         if (messageContent.QuestionType == 1) {
             for (const key in messageContent.Options){
-                let option = document.createElement("input")
+                const option = document.createElement("input")
                 option.setAttribute("class", "answer-option")
                 option.setAttribute("type", "radio")
                 option.setAttribute("name", "answer")
                 option.setAttribute("id","option"+key)
                 option.setAttribute("value",messageContent.Options[key])
-                let label = document.createElement("label")
+                const label = document.createElement("label")
                 label.setAttribute("for","option"+key)
                 label.innerText = messageContent.Options[key]
                 
-                let lineBreak = document.createElement("br")
+                const lineBreak = document.createElement("br")
 
                 inputSection.append(option)
                 inputSection.append(label)
@@ -130,7 +129,7 @@ function pushToFront(messageContent){
 
             }
         } else {
-            let openAnwer = document.createElement("input")
+            const openAnwer = document.createElement("input")
             openAnwer.setAttribute("type","text")
             openAnwer.setAttribute("name","answer")
             openAnwer.setAttribute("id","open-answer")
@@ -181,7 +180,7 @@ function pushToFront(messageContent){
 }
 
 function pushSubtotals(totalObjects){
-    let subtotalSection = document.getElementById("subtotals")
+    const subtotalSection = document.getElementById("subtotals")
     let totalContent = ""
     for (const key in totalObjects){
         totalContent += key + " : " + totalObjects[key] + "<br>"
@@ -190,9 +189,9 @@ function pushSubtotals(totalObjects){
 }
 
 function pushCurrentResult(resultObjects){
-    let currentResultSection = document.getElementById("current-question-result")
+    const currentResultSection = document.getElementById("current-question-result")
     let resultContent = ""
-    let waitfor = []
+    const waitfor = []
     for (const key in resultObjects){
         switch(resultObjects[key]){
             case 3:
@@ -235,7 +234,7 @@ function setSubmitButtonState(host, started){
 }
 
 questionImage.addEventListener("click", ()=>{
-    let fullImage = document.getElementById("question-image-full");
+    const fullImage = document.getElementById("question-image-full");
     fullImage.src = questionImage.src
     fullImage.style.display = "block"
 
