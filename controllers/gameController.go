@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"quiz3/dbconn"
+	"quiz3/filestore"
 	"quiz3/models"
 	"strconv"
 	"strings"
@@ -29,7 +30,7 @@ type quizState struct {
 }
 
 var (
-	storageUrl string = dbconn.GetImageStorageUrl()
+	storageUrl string = filestore.GetImageStorageUrl()
 	quizStates        = make(map[string]*quizState)
 )
 
