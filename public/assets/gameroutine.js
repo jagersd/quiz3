@@ -8,6 +8,7 @@ const warningMessage = document.getElementById("host-warning-message")
 const playerResultDisplay = document.getElementById("show-player-result")
 const questionCounterDisplay = document.getElementById("question-counter-display")
 const questionImage = document.getElementById("question-image")
+const waitingroomMessage = document.getElementById("waiting-room-tag-line")
 
 let questionCounter = 0
 let questionType = 0
@@ -100,10 +101,14 @@ function pushToFront(messageContent){
 
         if (messageContent.Attachment != ""){
             questionImage.src = messageContent.Attachment
+            questionImage.style.display ="block"
+        } else {
+            questionImage.style.display = "none"
         }
         
         //display question number animation
         if (questionCounter >= 1){
+            waitingroomMessage.innerText = "These players have yet to answer:"
             questionCounterDisplay.innerText = "Question " + questionCounter
             questionCounterDisplay.classList.add("next-question-display")
         }
@@ -152,6 +157,7 @@ function pushToFront(messageContent){
         if (questionCounter == messageContent.LastQuestion){
             const params = window.location.href.split("/")
             document.getElementById("quiz-finished").style.display = "block"
+            submitButton.style.display = "none"
             document.getElementById("to-results-link").href = "/finished/"+params[params.length -1]
         }
     }
@@ -208,6 +214,7 @@ function pushCurrentResult(resultObjects){
     currentResultSection.innerHTML = resultContent
     if (waitfor.length <= 1){
         submitButton.disabled = false
+        submitButton.style.opacity = "1"
     }
 }
 
@@ -217,6 +224,7 @@ function setSubmitButtonState(host, started){
             warningMessage.style.display = "none"
             submitButton.value = "Next Question"
             submitButton.disabled = true
+            submitButton.style.opacity = "0.6"
         } else {
             warningMessage.style.display = "block"
             submitButton.value = "Start the Quiz"

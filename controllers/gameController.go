@@ -167,7 +167,13 @@ func (quiz *quizState) moveToNextQuestion() {
 	quiz.CurrentQuestion = question.Body
 	quiz.Answer = question.Answer
 	quiz.QuestionType = question.Type
-	quiz.Attachment = "../quiz-images/" + strconv.FormatUint(uint64(question.ID), 10) + "." + question.Attachment
+
+	if question.Attachment != "" {
+		quiz.Attachment = "../quiz-images/" + strconv.FormatUint(uint64(question.ID), 10) + "." + question.Attachment
+	} else {
+		quiz.Attachment = ""
+	}
+
 	var options []models.Option
 	quiz.Options = nil
 

@@ -50,6 +50,7 @@ async function joinGame(event){
 
         initSection.style.display ="block"
         document.getElementById("to-quiz-link").href="/game/"+quizCode
+        document.getElementById("join-quiz-form").style.display = "none"
     }
 
     if (responseString == "Quiz already started"){

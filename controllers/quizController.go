@@ -31,7 +31,7 @@ func createQuiz(w http.ResponseWriter, r *http.Request) {
 
 	setHost := models.Result{
 		QuizId:     newQuiz.ID,
-		PlayerName: r.FormValue("player-name"),
+		PlayerName: r.FormValue("player-name") + " (host)",
 		PlayerSlug: createSlug(),
 		IsHost:     true,
 	}
