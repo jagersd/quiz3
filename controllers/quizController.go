@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"net/http"
 	"quiz3/dbconn"
+	"quiz3/filestore"
 	"quiz3/models"
 	"strconv"
 	"strings"
@@ -46,6 +47,8 @@ func createQuiz(w http.ResponseWriter, r *http.Request) {
 		Total:           make(map[string]uint),
 	}
 
+	go prepFiles(newQuiz.Questions)
+
 	fmt.Fprintf(w, newQuiz.QuizSlug+"|"+setHost.PlayerSlug)
 }
 
@@ -77,6 +80,28 @@ func getQuestions(subjectId uint, questionAmount int) string {
 	return strings.TrimSuffix(returnString, ",")
 }
 
+func prepFiles(questionIds string) {
+	type QAttachment struct {
+		ID         uint
+		Attachment string
+	}
+
+	var questionsWithAttachment []QAttachment
+	query := "SELECT id, attachment FROM questions WHERE attachment IS NOT NULL AND id IN (" + questionIds + ")"
+	dbconn.DB.Raw(query).Scan(&questionsWithAttachment)
+
+	if len(questionsWithAttachment) < 1 {
+		return
+	}
+
+	var images []string
+	for _, attachment := range questionsWithAttachment {
+		images = append(images, fmt.Sprintf("%d", attachment.ID)+"."+attachment.Attachment)
+	}
+
+	filestore.ProcessImages(images)
+}
+
 func joinGame(w http.ResponseWriter, r *http.Request) {
 	var quiz models.Quiz
 
@@ -96,7 +121,6 @@ func joinGame(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, newResult.PlayerSlug)
 		return
 	}
-	// check whether the quiz already started
 
 	if quiz.ID != 0 && quiz.Started == true {
 		fmt.Fprintf(w, "Quiz already started")

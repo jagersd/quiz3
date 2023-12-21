@@ -19,7 +19,7 @@ type s3operator struct {
 	bucket string
 }
 
-func NewS3client() *s3operator {
+func newS3operator() *s3operator {
 	accessKey, secretKey, err := loadFilestoreCredentials()
 	region := "nl-ams"
 
@@ -48,30 +48,32 @@ func NewS3client() *s3operator {
 	}
 }
 
-func (s *s3operator) Download(fileName string) {
+func (s *s3operator) download(fileName string) {
 	ctx := context.Background()
 	output, err := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &s.bucket,
 		Key:    aws.String(fileName),
 	})
 	if err != nil {
-		log.Println("Unable to locate file: ", err)
+		log.Println("Unable to locate file ", fileName, ": ", err)
+		return
 	}
 	defer output.Body.Close()
-	file, err := os.Create(fileName)
+	file, err := os.Create("public/quiz-images/" + fileName)
 	if err != nil {
 		log.Printf("Couldn't create file %v. Here's why: %v\n", fileName, err)
+		return
 	}
 	defer file.Close()
 	body, err := io.ReadAll(output.Body)
 	if err != nil {
 		log.Printf("Couldn't read object body from %v. Here's why: %v\n", fileName, err)
+		return
 	}
 	_, err = file.Write(body)
 }
 
-func (s *s3operator) ListFiles() {
-
+func (s *s3operator) listFiles() {
 	output, err := s.client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
 		Bucket: &s.bucket,
 	})
@@ -84,6 +86,16 @@ func (s *s3operator) ListFiles() {
 	fmt.Println("Objects in the bucket:")
 	for _, item := range output.Contents {
 		fmt.Println("Name:", *item.Key)
+	}
+}
+
+func ProcessImages(images []string) {
+	s3client := newS3operator()
+	dir := "public/quiz-images/"
+	for _, image := range images {
+		if _, err := os.Stat(dir + image); err != nil {
+			s3client.download(image)
+		}
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"quiz3/dbconn"
-	"quiz3/filestore"
 	"quiz3/models"
 	"strconv"
 	"strings"
@@ -30,8 +29,7 @@ type quizState struct {
 }
 
 var (
-	storageUrl string = filestore.GetImageStorageUrl()
-	quizStates        = make(map[string]*quizState)
+	quizStates = make(map[string]*quizState)
 )
 
 func mainRoutine(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +37,6 @@ func mainRoutine(w http.ResponseWriter, r *http.Request) {
 
 	quiz, ok := quizStates[quizSlug]
 	if !ok {
-		//try to recreate quizState
 		templates.ExecuteTemplate(w, "errcatcher.htlm", "State lost for this quiz")
 	}
 	updateQuizState(quiz)
@@ -170,7 +167,7 @@ func (quiz *quizState) moveToNextQuestion() {
 	quiz.CurrentQuestion = question.Body
 	quiz.Answer = question.Answer
 	quiz.QuestionType = question.Type
-	quiz.Attachment = storageUrl + strconv.FormatUint(uint64(question.ID), 10) + "." + question.Attachment
+	quiz.Attachment = "../quiz-images/" + strconv.FormatUint(uint64(question.ID), 10) + "." + question.Attachment
 	var options []models.Option
 	quiz.Options = nil
 
