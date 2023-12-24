@@ -18,7 +18,7 @@ function connectToSocket(){
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
 
-    const conn = new WebSocket("ws://"+ document.location.host + "/ws/" + quizId)
+    const conn = new WebSocket("wss://"+ document.location.host + "/ws/" + quizId)
     
     conn.onopen = () => {
         console.log("WebSocket connected!")

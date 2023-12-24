@@ -146,6 +146,7 @@ input[type='radio']:checked:after {
 #show-player-result{
     margin-top: 15px;
 }
+
 /*functional*/
 #init-section, #already-started, #host-section, #quiz-finished, #show-player-result, #question-image-full{
     display: none;

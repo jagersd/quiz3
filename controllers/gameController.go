@@ -211,7 +211,7 @@ func evaluateAnswer(player string, answer string, room *quizState) {
 		return
 	}
 
-	if strings.ToLower(room.Answer) == strings.ToLower(answer) {
+	if equalizeAnswer(room.Answer) == equalizeAnswer(answer) {
 		dbconn.DB.Model(&models.Result{}).Where("player_slug = ?", player).Update(column, 1)
 		dbconn.DB.Model(&models.Result{}).Where("player_slug = ?", player).Update("total", gorm.Expr("total + ?", 1))
 	} else {
@@ -219,6 +219,11 @@ func evaluateAnswer(player string, answer string, room *quizState) {
 	}
 
 	updateQuizState(room)
+}
+
+func equalizeAnswer(in string) string {
+	in = strings.ReplaceAll(in, " ", "")
+	return strings.ToLower(in)
 }
 
 func cleanUp() {
