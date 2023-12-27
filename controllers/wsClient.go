@@ -10,22 +10,22 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const(
-    writeWait = 10 * time.Second
-    pongWait = 60* time.Second
-    pingPeriod = (pongWait * 5) / 10
-    maxMessageSize = 512
+const (
+	writeWait      = 10 * time.Second
+	pongWait       = 60 * time.Second
+	pingPeriod     = (pongWait * 9) / 10
+	maxMessageSize = 512
 )
 
 var upgrader = websocket.Upgrader{
-    ReadBufferSize: 1024,
-    WriteBufferSize: 1024,
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
-type connection struct{
-    ws *websocket.Conn
-    send chan []byte
-    host bool
+type connection struct {
+	ws   *websocket.Conn
+	send chan []byte
+	host bool
 }
 
 func (s subscription) readPump() {
@@ -45,16 +45,16 @@ func (s subscription) readPump() {
 			}
 			break
 		}
-        player,msgType,msgString := ParseMessage(msg)
-        if player == quizStates[s.room].Host {
-            c.host = true
-        }
-        playermsg, hostmsg := createResponse(player, msgType, msgString, quizStates[s.room])
+		player, msgType, msgString := ParseMessage(msg)
+		if player == quizStates[s.room].Host {
+			c.host = true
+		}
+		playermsg, hostmsg := createResponse(player, msgType, msgString, quizStates[s.room])
 		m := message{playermsg, s.room}
 		h.sendToPlayers <- m
 
-        x := message{hostmsg, s.room}
-        h.sendToHost <- x
+		x := message{hostmsg, s.room}
+		h.sendToHost <- x
 	}
 }
 
@@ -89,8 +89,8 @@ func (s *subscription) writePump() {
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    roomId := vars["quizSlug"]
+	vars := mux.Vars(r)
+	roomId := vars["quizSlug"]
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err.Error())
@@ -103,14 +103,14 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	go s.readPump()
 }
 
-//returning player -- messagetype -- actual message
-func ParseMessage(received []byte) (string,string,string){
-    msgString := string(received)
-    msgArray := strings.Split(msgString,"|")
+// returning player -- messagetype -- actual message
+func ParseMessage(received []byte) (string, string, string) {
+	msgString := string(received)
+	msgArray := strings.Split(msgString, "|")
 
-    if len(msgArray) != 3{
-        return "","",""
-    }
-    
-    return msgArray[0], msgArray[1], msgArray[2]
+	if len(msgArray) != 3 {
+		return "", "", ""
+	}
+
+	return msgArray[0], msgArray[1], msgArray[2]
 }

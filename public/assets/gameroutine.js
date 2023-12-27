@@ -17,8 +17,9 @@ function connectToSocket(){
     const submitForm = document.getElementById("answer-submit-form")
     const params = window.location.href.split("/")
     const quizId = params[params.length -1]
+    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://"
 
-    const conn = new WebSocket("wss://"+ document.location.host + "/ws/" + quizId)
+    const conn = new WebSocket(protocol+ document.location.host + "/ws/" + quizId)
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
@@ -31,6 +32,7 @@ function connectToSocket(){
 
     conn.onclose = (event)=>{
         console.log("connection closed:", event)
+        connectToSocket()
     }
 
     submitForm.onsubmit = (e) => {
@@ -53,8 +55,6 @@ function connectToSocket(){
                 submitButton.style.display = "none"
             }
         }
-        
-        return false
     }
 
     conn.onmessage = (event)=>{
