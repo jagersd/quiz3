@@ -147,8 +147,13 @@ input[type='radio']:checked:after {
     margin-top: 15px;
 }
 
+#kick-form-btn{
+    padding: 5px;
+    color: maroon;
+}
+
 /*functional*/
-#init-section, #already-started, #host-section, #quiz-finished, #show-player-result, #question-image-full{
+#init-section, #already-started, #host-section, #quiz-finished, #show-player-result, #question-image-full, #kick-player-form{
     display: none;
 }
 

@@ -31,6 +31,7 @@ func New() http.Handler {
 	r.HandleFunc("/addsubject", addSubject).Methods("POST")
 	r.HandleFunc("/addquestion", addQuestionPage).Methods("GET")
 	r.HandleFunc("/addquestion", addQuestion).Methods("POST")
+	r.HandleFunc("/kickplayer", kickPlayer).Methods("POST")
 
 	//websocket endpoint
 	r.HandleFunc("/ws/{quizSlug}", serveWs)

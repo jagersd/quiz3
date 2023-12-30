@@ -38,6 +38,14 @@
     <p id="current-question-result"></p>
     <u>subtotals:</u>
     <p id="subtotals"></p>
+    <button onclick="showKickPlayerForm()" id="kick-form-btn">kickform</button>
+    <form onsubmit="return kickPlayer(this)" id="kick-player-form">
+        <p>ATTENTION: you will be moved to the next question!</p>
+        <input type="hidden" value="{{.}}" name="quiz-slug">
+        <input type="hidden" value="" name="host-slug">
+        <input type="text" name="player-name">
+        <button type="submit">Kick player</button>
+    </form>
 </div>
 
 <div id="quiz-finished">

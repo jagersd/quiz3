@@ -258,3 +258,24 @@ questionImage.addEventListener("click", ()=>{
         fullImage.style.display = "none"
     })
 })
+
+function showKickPlayerForm(){
+    const form = document.getElementById("kick-player-form")
+    if (form.style.display === "" || form.style.display === "none"){
+        form.style.display = "block"
+    } else {
+        form.style.display = "none"
+    }
+}
+
+function kickPlayer(form){
+    form.preventDefault
+    form.elements["host-slug"].value = player
+    fetch("/kickplayer",{
+        method:"POST",
+        body: new FormData(form)
+    })
+
+    return false
+}
+

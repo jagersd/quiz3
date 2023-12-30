@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"quiz3/dbconn"
 	"quiz3/models"
@@ -42,6 +43,51 @@ func mainRoutine(w http.ResponseWriter, r *http.Request) {
 	updateQuizState(quiz)
 
 	templates.ExecuteTemplate(w, "gameroutine.html", quizSlug)
+}
+
+func kickPlayer(w http.ResponseWriter, r *http.Request) {
+	quizSlug := r.PostFormValue("quiz-slug")
+	playerName := r.PostFormValue("player-name")
+	hostSlug := r.PostFormValue("host-slug")
+	if quizSlug == "" || playerName == "" {
+		log.Println("quizSlug: ", quizSlug, " hostSlug ", hostSlug)
+		return
+	}
+
+	quiz, ok := quizStates[quizSlug]
+	if !ok {
+		log.Println("quizState not found")
+		return
+	}
+
+	if quiz.Host != hostSlug {
+		log.Println("Request does not come from host")
+		return
+	}
+
+	quizId := getQuizIdByHost(hostSlug)
+	if quizId == 0 {
+		log.Println("quizId not found")
+		return
+	}
+
+	err := dbconn.DB.Exec("DELETE FROM results WHERE quiz_id = ? AND player_name = ? LIMIT 1;", quizId, playerName).Error
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	delete(quiz.CurrentResult, playerName)
+	delete(quiz.Total, playerName)
+
+	updateQuizState(quiz)
+
+	_, hostmsg := createResponse(hostSlug, "joined", "", quiz)
+	x := message{hostmsg, quizSlug}
+	h.sendToHost <- x
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(playerName + " removed from game."))
 }
 
 func updateQuizState(quiz *quizState) {
