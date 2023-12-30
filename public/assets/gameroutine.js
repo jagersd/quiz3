@@ -12,6 +12,9 @@ const waitingroomMessage = document.getElementById("waiting-room-tag-line")
 
 let questionCounter = 0
 let questionType = 0
+let reconnectCounter = 0
+
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 function connectToSocket(){
     const submitForm = document.getElementById("answer-submit-form")
@@ -32,7 +35,11 @@ function connectToSocket(){
 
     conn.onclose = (event)=>{
         console.log("connection closed:", event)
-        connectToSocket()
+        while (reconnectCounter < 10){
+            connectToSocket()
+            sleep(1500)
+            reconnectCounter++
+        }
     }
 
     submitForm.onsubmit = (e) => {
@@ -55,6 +62,7 @@ function connectToSocket(){
                 submitButton.style.display = "none"
             }
         }
+        return false
     }
 
     conn.onmessage = (event)=>{
