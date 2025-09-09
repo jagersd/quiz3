@@ -26,6 +26,7 @@ function connectToSocket(){
     
     conn.onopen = () => {
         console.log("WebSocket connected!")
+        reconnectCounter = 0
         conn.send(player + "|joined|" + "")
     }
 
@@ -33,12 +34,12 @@ function connectToSocket(){
         console.log("Error in Socket connection", err)
     }
 
-    conn.onclose = (event)=>{
+    conn.onclose = async (event)=>{
         console.log("connection closed:", event)
         while (reconnectCounter < 10){
-            connectToSocket()
-            sleep(1500)
+            await sleep(1500)
             reconnectCounter++
+            connectToSocket()
         }
     }
 
